@@ -35,6 +35,7 @@ class MainViewModel : ViewModel() {
         }
     }
     fun getApods1() {
+        //THis is a sample comment
         var value=apodList.value
         value?.status=Status.LOADING
 
