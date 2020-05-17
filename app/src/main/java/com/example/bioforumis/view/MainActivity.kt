@@ -114,6 +114,9 @@ class MainActivity : AppCompatActivity () {
                             progressBar.visibility = View.VISIBLE
                             recyclerView.visibility = View.GONE
                         }
+                        Status.UNKNOWN ->{
+                            Log.e("errr","unknown")
+                        }
                     }
                 }
             }
