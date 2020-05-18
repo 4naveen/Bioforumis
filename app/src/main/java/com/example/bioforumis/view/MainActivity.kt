@@ -17,6 +17,7 @@ import com.example.bioforumis.R
 import com.example.bioforumis.service.adapter.MainAdapter
 import com.example.bioforumis.service.model.Apod
 import com.example.bioforumis.service.model.ApodEntity
+import com.example.bioforumis.service.utils.GeneralService
 import com.example.bioforumis.service.utils.Status
 import com.example.bioforumis.viewmodel.MainViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -120,7 +121,7 @@ class MainActivity : AppCompatActivity () {
                 }
             }
         })
-        viewModel.getApods()
+        viewModel.getApods(this@MainActivity,GeneralService.isOnline(this@MainActivity))
     }
 
     private fun setupObserverBydate(date:String) {
@@ -154,18 +155,6 @@ class MainActivity : AppCompatActivity () {
         apod_list?.clear()
         apod_list?.addAll(apods)
        adapter.addApod(apod_list as ArrayList)
-
-       // saveApod(apods)
-
-    }
-
-    private fun saveApod(apods: List<Apod>) {
-        var apod_list:ArrayList<Apod>?=null
-        for (apod in apods){
-          //  var apod: ApodEntity(image_url=apod.image_url;date=apod.date;title=apod.title)
-           // apod_list!!.add(apod)
-        }
-        apod_list?.let { viewModel.saveApod(it,this@MainActivity) }
 
     }
 

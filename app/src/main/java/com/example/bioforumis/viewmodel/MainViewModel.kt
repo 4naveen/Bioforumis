@@ -15,22 +15,25 @@ import kotlinx.coroutines.Dispatchers
 
 
 class MainViewModel : ViewModel() {
-    var apodList: LiveData<Response<List<Apod>>> =MainRepository.getInstance()!!.apodList
-    var apod: LiveData<Response<Apod>> =MainRepository.getInstance()!!.apod
+    var apodList: LiveData<Response<List<Apod>>> = MainRepository.getInstance()!!.apodList
+    var apod: LiveData<Response<Apod>> = MainRepository.getInstance()!!.apod
 
-    fun getApods(){
+    fun getApods(context: Context, isConnected: Boolean) {
         val res = apodList.value
         res?.status = Status.LOADING
-        MainRepository.getInstance()!!.getApods()
+        if (isConnected) {
+            MainRepository.getInstance()!!.getApods(context)
+        }
+        else{
+            MainRepository.getInstance()!!.getApodsfromdb(context)
+        }
+
     }
 
-    fun getApod(date:String){
+    fun getApod(date: String) {
         val res = apod.value
         res?.status = Status.LOADING
         MainRepository.getInstance()!!.getApod(date)
     }
-    fun saveApod(apods:ArrayList<Apod>,context:Context){
 
-        MainRepository.getInstance()!!.saveApod(apods,context)
-    }
 }

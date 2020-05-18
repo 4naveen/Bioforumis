@@ -6,17 +6,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.room.Room
 import com.example.bioforumis.service.model.Apod
-import com.example.bioforumis.service.model.ApodEntity
 import com.example.bioforumis.service.model.AppDatabase
 import com.example.bioforumis.service.network.ApiService
 import com.example.bioforumis.service.network.RetrofitBuilder
 import com.example.bioforumis.service.utils.GeneralService
 import com.example.bioforumis.service.utils.Response
 import com.example.bioforumis.service.utils.Status
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
+import java.lang.Exception
 
 
 class MainRepository() {
@@ -33,7 +35,8 @@ class MainRepository() {
        apiservice = RetrofitBuilder.apiService
    }
 
-    fun getApods() {
+    fun getApods(context:Context) {
+        db = Room.databaseBuilder(context,AppDatabase::class.java, "apod.db").build()
 
         apiservice?.getApod("NNKOjkoul8n1CH18TWA9gwngW1s1SmjESPjNoUFo",GeneralService.getStartDate(),GeneralService.getEnddate())?.enqueue(object : Callback<List<Apod>?>{
             override fun onFailure(call: Call<List<Apod>?>, t: Throwable) {
@@ -43,11 +46,39 @@ class MainRepository() {
             override fun onResponse(call: Call<List<Apod>?>, response: retrofit2.Response<List<Apod>?>) {
                 _apodList.value= Response(Status.SUCCESS, response.body(), "")
 
+                try {
+                    Thread(Runnable {
+                        response.body()?.let { db!!.apodDao().insertAll(it) }
+                    }).start()
+                }catch (e:Exception){
+                    _apodList.value= Response(Status.ERROR, null, "")
+
+                }
 
             }
         })
     }
+    fun getApodsfromdb(context:Context) {
+        db = Room.databaseBuilder(context,AppDatabase::class.java, "apod.db").build()
+       try {
+           GlobalScope.launch {
+               var data = db!!.apodDao().getAll()
 
+               withContext(Dispatchers.Main){
+                   _apodList.value= Response(Status.SUCCESS, data, "")
+
+                   data?.forEach {
+                       Log.e("data",it.date)
+                   }
+               }
+
+           }
+       }catch (e:Exception){
+           Log.e("exception",e.toString())
+       }
+
+
+    }
     fun getApod(date:String) {
 
         apiservice?.getApodBydate("NNKOjkoul8n1CH18TWA9gwngW1s1SmjESPjNoUFo",date)?.enqueue(object : Callback<Apod>{
@@ -61,19 +92,6 @@ class MainRepository() {
         })
     }
 
-    fun saveApod(apods:ArrayList<Apod>,context:Context) {
-        db = Room.databaseBuilder(context,AppDatabase::class.java, "apod.db").build()
-        var apod_list:ArrayList<ApodEntity>
-        GlobalScope.launch {
-            db!!.apodDao().insertAll(apods)
-            var data = db!!.apodDao().getAll()
-
-            data?.forEach {
-                Log.e("data",it.date)
-            }
-        }
-
-    }
   companion object{
       private var mainRepository: MainRepository? = null
 
