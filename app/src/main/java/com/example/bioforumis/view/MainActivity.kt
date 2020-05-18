@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
-import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -17,11 +16,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.bioforumis.R
 import com.example.bioforumis.service.adapter.MainAdapter
 import com.example.bioforumis.service.model.Apod
+import com.example.bioforumis.service.model.ApodEntity
 import com.example.bioforumis.service.utils.Status
 import com.example.bioforumis.viewmodel.MainViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity () {
@@ -33,7 +34,8 @@ class MainActivity : AppCompatActivity () {
     private var mYear = 0
     private  var mMonth:Int = 0
     private  var mDay:Int = 0
-    private var apod_list: ArrayList<Apod> ?=null
+    private var apod_list: ArrayList<Apod> ?= ArrayList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -94,73 +96,82 @@ class MainActivity : AppCompatActivity () {
     }
     private fun setupObservers() {
 
-        Log.e("errr","errror"+viewModel)
         viewModel.apodList.observe(this, Observer {
-            it?.let { response ->
-                if (response!= null) {
-                    when (response.status) {
-                        Status.SUCCESS -> {
-                            recyclerView.visibility = View.VISIBLE
-                            progressBar.visibility = View.GONE
-                            response.data?.let { apods -> retrieveList(apods) }
-                        }
-                        Status.ERROR -> {
-                            recyclerView.visibility = View.VISIBLE
-                            progressBar.visibility = View.GONE
-
-                            Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
-                        }
-                        Status.LOADING -> {
-                            progressBar.visibility = View.VISIBLE
-                            recyclerView.visibility = View.GONE
-                        }
-                        Status.UNKNOWN ->{
-                            Log.e("errr","unknown")
-                        }
-                    }
-                }
-            }
-        })
-
-        viewModel.getApods1()
-    }
-    private fun setupObserverBydate(date:String) {
-        viewModel.getApod(date).observe(this, Observer {
             it?.let { response ->
                 when (response.status) {
                     Status.SUCCESS -> {
                         recyclerView.visibility = View.VISIBLE
                         progressBar.visibility = View.GONE
-                        response.data?.let { apod-> retrieveList(apod) }!!
+                        response.data?.let { apods -> saveList(apods) }
                     }
                     Status.ERROR -> {
                         recyclerView.visibility = View.VISIBLE
                         progressBar.visibility = View.GONE
+
                         Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
                     }
                     Status.LOADING -> {
                         progressBar.visibility = View.VISIBLE
                         recyclerView.visibility = View.GONE
                     }
+                    Status.UNKNOWN ->{
+                        Log.e("errr","unknown")
+                    }
                 }
             }
         })
+        viewModel.getApods()
     }
-    private fun retrieveList(apods: List<Apod>) {
-        apod_list!!.addAll(apods)
-      Log.e("size",apods.size.toString())
-    /* for (apos in apods){
-         Log.e("date",apos.date)
-     }*/
-       adapter.addApod(apods)
+
+    private fun setupObserverBydate(date:String) {
+        viewModel.apod.observe(this, Observer {
+            it?.let { response ->
+                when (response.status) {
+                    Status.SUCCESS -> {
+                        recyclerView.visibility = View.VISIBLE
+                        progressBar.visibility = View.GONE
+                        response.data?.let { apods -> saveList(apods) }
+                    }
+                    Status.ERROR -> {
+                        recyclerView.visibility = View.VISIBLE
+                        progressBar.visibility = View.GONE
+
+                        Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                    }
+                    Status.LOADING -> {
+                        progressBar.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE
+                    }
+                    Status.UNKNOWN ->{
+                        Log.e("errr","unknown")
+                    }
+                }
+            }
+        })
+        viewModel.getApod(date)
+    }
+    private fun saveList(apods: List<Apod>) {
+        apod_list?.clear()
+        apod_list?.addAll(apods)
+       adapter.addApod(apod_list as ArrayList)
+
+       // saveApod(apods)
 
     }
 
-    private fun retrieveList(apod: Apod) {
-        /*     Log.e("size",apods.size.toString())
-          for (apos in apods){
-              Log.e("date",apos.date)
-          }*/
+    private fun saveApod(apods: List<Apod>) {
+        var apod_list:ArrayList<Apod>?=null
+        for (apod in apods){
+          //  var apod: ApodEntity(image_url=apod.image_url;date=apod.date;title=apod.title)
+           // apod_list!!.add(apod)
+        }
+        apod_list?.let { viewModel.saveApod(it,this@MainActivity) }
+
+    }
+
+    private fun saveList(apod: Apod) {
+             Log.e("size",apod.toString())
+
         apod_list!!.add(apod)
         adapter.addApod(apod_list!!)
 

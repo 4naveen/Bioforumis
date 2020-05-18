@@ -9,9 +9,7 @@ import com.bumptech.glide.Glide
 import com.example.bioforumis.R
 import com.example.bioforumis.service.model.Apod
 import com.example.bioforumis.view.DiffUtilCallback
-import kotlinx.android.synthetic.main.row_item.view.title
-import kotlinx.android.synthetic.main.row_item.view.date
-import kotlinx.android.synthetic.main.row_item.view.image
+import kotlinx.android.synthetic.main.row_item.view.*
 
 class MainAdapter(private val apods: ArrayList<Apod>) : RecyclerView.Adapter<MainAdapter.DataViewHolder>() {
 
@@ -21,7 +19,7 @@ class MainAdapter(private val apods: ArrayList<Apod>) : RecyclerView.Adapter<Mai
         fun bind(apod: Apod) {
             itemView.apply {
                 title.text = apod.title
-                date.text = apod.date
+                tvdate.text = apod.date
                 Glide.with(image.context)
                     .load(apod.image_url)
                     .into(image)
