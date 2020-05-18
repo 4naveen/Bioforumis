@@ -8,7 +8,7 @@ interface ApodDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertApod(apod: Apod)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll( apods: List<Apod>)
 
     @Query("SELECT * FROM table_apod")

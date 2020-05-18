@@ -1,7 +1,11 @@
 package com.example.bioforumis.service.repository
 
 import android.content.Context
+import android.os.AsyncTask
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.room.Room
@@ -25,85 +29,95 @@ class MainRepository() {
     private var apiservice: ApiService? = null
 
     private var _apodList: MutableLiveData<Response<List<Apod>>> = MutableLiveData()
-    var apodList: LiveData<Response<List<Apod>>> =_apodList
-    var db:AppDatabase?=null
+    var apodList: LiveData<Response<List<Apod>>> = _apodList
+    var db: AppDatabase? = null
 
     private var _apod: MutableLiveData<Response<Apod>> = MutableLiveData()
-    var apod: LiveData<Response<Apod>> =_apod
+    var apod: LiveData<Response<Apod>> = _apod
 
-   init {
-       apiservice = RetrofitBuilder.apiService
-   }
+    init {
+        apiservice = RetrofitBuilder.apiService
 
-    fun getApods(context:Context) {
-        db = Room.databaseBuilder(context,AppDatabase::class.java, "apod.db").build()
+    }
 
-        apiservice?.getApod("NNKOjkoul8n1CH18TWA9gwngW1s1SmjESPjNoUFo",GeneralService.getStartDate(),GeneralService.getEnddate())?.enqueue(object : Callback<List<Apod>?>{
+    fun getApods(context: Context) {
+        db = Room.databaseBuilder(context, AppDatabase::class.java, "apod.db").build()
+
+        apiservice?.getApod(
+            "NNKOjkoul8n1CH18TWA9gwngW1s1SmjESPjNoUFo",
+            GeneralService.getStartDate(),
+            GeneralService.getEnddate()
+        )?.enqueue(object : Callback<List<Apod>?> {
             override fun onFailure(call: Call<List<Apod>?>, t: Throwable) {
-                _apodList.value= Response(Status.ERROR, null, "")
+                _apodList.value = Response(Status.ERROR, null, "")
             }
 
             override fun onResponse(call: Call<List<Apod>?>, response: retrofit2.Response<List<Apod>?>) {
-                _apodList.value= Response(Status.SUCCESS, response.body(), "")
+                _apodList.value = Response(Status.SUCCESS, response.body(), "")
 
                 try {
-                    Thread(Runnable {
+                    GlobalScope.launch {
                         response.body()?.let { db!!.apodDao().insertAll(it) }
-                    }).start()
-                }catch (e:Exception){
-                    _apodList.value= Response(Status.ERROR, null, "")
+                    }
+                } catch (e: Exception) {
+                    _apodList.value = Response(Status.ERROR, null, "")
 
                 }
 
+
             }
         })
     }
-    fun getApodsfromdb(context:Context) {
-        db = Room.databaseBuilder(context,AppDatabase::class.java, "apod.db").build()
-       try {
-           GlobalScope.launch {
-               var data = db!!.apodDao().getAll()
 
-               withContext(Dispatchers.Main){
-                   _apodList.value= Response(Status.SUCCESS, data, "")
 
-                   data?.forEach {
-                       Log.e("data",it.date)
-                   }
-               }
+    fun getApodsfromdb(context: Context) {
+        db = Room.databaseBuilder(context, AppDatabase::class.java, "apod.db").build()
 
-           }
-       }catch (e:Exception){
-           Log.e("exception",e.toString())
-       }
+        try {
+            Thread(Runnable {
+                var data = db!!.apodDao().getAll()
 
+                val handler = Handler(Looper.getMainLooper())
+                handler.post {
+                    _apodList.value = Response(Status.SUCCESS, data, "")
+                }
+
+                data?.forEach {
+                    Log.e("data", it.date)
+                }
+            }).start()
+        } catch (e: Exception) {
+            _apodList.value = Response(Status.ERROR, null, "")
+
+        }
 
     }
-    fun getApod(date:String) {
 
-        apiservice?.getApodBydate("NNKOjkoul8n1CH18TWA9gwngW1s1SmjESPjNoUFo",date)?.enqueue(object : Callback<Apod>{
+    fun getApod(date: String) {
+
+        apiservice?.getApodBydate("NNKOjkoul8n1CH18TWA9gwngW1s1SmjESPjNoUFo", date)?.enqueue(object : Callback<Apod> {
             override fun onFailure(call: Call<Apod>, t: Throwable) {
-                _apod.value= Response(Status.ERROR, null, "")
+                _apod.value = Response(Status.ERROR, null, "")
             }
 
             override fun onResponse(call: Call<Apod>, response: retrofit2.Response<Apod>) {
-                _apod.value= Response(Status.SUCCESS, response.body(), "")
+                _apod.value = Response(Status.SUCCESS, response.body(), "")
             }
         })
     }
 
-  companion object{
-      private var mainRepository: MainRepository? = null
+    companion object {
+        private var mainRepository: MainRepository? = null
 
-      @Synchronized
-      fun getInstance(): MainRepository? {
-          if (mainRepository == null) {
-              if (mainRepository == null) {
-                  mainRepository = MainRepository()
-              }
-          }
-          return mainRepository
-      }
-  }
+        @Synchronized
+        fun getInstance(): MainRepository? {
+            if (mainRepository == null) {
+                if (mainRepository == null) {
+                    mainRepository = MainRepository()
+                }
+            }
+            return mainRepository
+        }
+    }
 
 }
