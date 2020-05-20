@@ -1,6 +1,6 @@
 package com.example.bioforumis.service.network
 
-import com.example.bioforumis.service.model.Apod
+import com.example.bioforumis.service.model.data.Apod
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

@@ -1,17 +1,12 @@
 package com.example.bioforumis.viewmodel
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
-import com.example.bioforumis.service.model.Apod
-import com.example.bioforumis.service.model.ApodEntity
+import com.example.bioforumis.service.model.data.Apod
 import com.example.bioforumis.service.repository.MainRepository
-import com.example.bioforumis.service.utils.Response
-import com.example.bioforumis.service.utils.Status
-import kotlinx.coroutines.Dispatchers
+import com.example.bioforumis.service.model.data.Response
+import com.example.bioforumis.service.model.data.Status
 
 
 class MainViewModel : ViewModel() {
@@ -27,7 +22,6 @@ class MainViewModel : ViewModel() {
         else{
             MainRepository.getInstance()!!.getApodsfromdb(context)
         }
-
     }
 
     fun getApod(date: String) {

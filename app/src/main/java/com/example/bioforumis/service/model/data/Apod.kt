@@ -1,4 +1,4 @@
-package com.example.bioforumis.service.model
+package com.example.bioforumis.service.model.data
 
 
 import androidx.room.ColumnInfo

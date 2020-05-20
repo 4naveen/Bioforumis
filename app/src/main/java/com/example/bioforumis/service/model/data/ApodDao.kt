@@ -1,6 +1,7 @@
-package com.example.bioforumis.service.model
+package com.example.bioforumis.service.model.data
 
 import androidx.room.*
+import com.example.bioforumis.service.model.data.Apod
 
 @Dao
 interface ApodDao {

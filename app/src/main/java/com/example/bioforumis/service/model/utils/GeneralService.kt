@@ -1,4 +1,4 @@
-package com.example.bioforumis.service.utils
+package com.example.bioforumis.service.model.utils
 
 import android.content.Context
 import android.net.ConnectivityManager

@@ -1,8 +1,8 @@
-package com.example.bioforumis.view
+package com.example.bioforumis.view.callback
 
 import androidx.annotation.Nullable
 import androidx.recyclerview.widget.DiffUtil
-import com.example.bioforumis.service.model.Apod
+import com.example.bioforumis.service.model.data.Apod
 
 class DiffUtilCallback(private val oldList: List<Apod>, private val newList: List<Apod>) : DiffUtil.Callback() {
 

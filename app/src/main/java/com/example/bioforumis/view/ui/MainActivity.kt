@@ -1,4 +1,4 @@
-package com.example.bioforumis.view
+package com.example.bioforumis.view.ui
 
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
@@ -14,11 +14,10 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bioforumis.R
-import com.example.bioforumis.service.adapter.MainAdapter
-import com.example.bioforumis.service.model.Apod
-import com.example.bioforumis.service.model.ApodEntity
-import com.example.bioforumis.service.utils.GeneralService
-import com.example.bioforumis.service.utils.Status
+import com.example.bioforumis.view.adapter.MainAdapter
+import com.example.bioforumis.service.model.data.Apod
+import com.example.bioforumis.service.model.utils.GeneralService
+import com.example.bioforumis.service.model.data.Status
 import com.example.bioforumis.viewmodel.MainViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.SimpleDateFormat
@@ -48,12 +47,8 @@ class MainActivity : AppCompatActivity () {
 
         //setSupportActionBar(findViewById(R.id.toolbar))
         setupViewModel()
-
         setupUI()
-
-
         setupObservers()
-
         fab!!.setOnClickListener { view ->
             val c = Calendar.getInstance()
             mYear = c.get(Calendar.YEAR);
@@ -160,7 +155,6 @@ class MainActivity : AppCompatActivity () {
 
     private fun saveList(apod: Apod) {
              Log.e("size",apod.toString())
-
         apod_list!!.add(apod)
         adapter.addApod(apod_list!!)
 

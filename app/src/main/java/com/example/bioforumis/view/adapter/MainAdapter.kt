@@ -1,4 +1,4 @@
-package com.example.bioforumis.service.adapter
+package com.example.bioforumis.view.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bioforumis.R
-import com.example.bioforumis.service.model.Apod
-import com.example.bioforumis.view.DiffUtilCallback
+import com.example.bioforumis.service.model.data.Apod
+import com.example.bioforumis.view.callback.DiffUtilCallback
 import kotlinx.android.synthetic.main.row_item.view.*
 
 class MainAdapter(private val apods: ArrayList<Apod>) : RecyclerView.Adapter<MainAdapter.DataViewHolder>() {
@@ -38,7 +38,10 @@ class MainAdapter(private val apods: ArrayList<Apod>) : RecyclerView.Adapter<Mai
 
     fun addApod(newapods: List<Apod>) {
 
-        val diffCallback = DiffUtilCallback(apods, newapods)
+        val diffCallback = DiffUtilCallback(
+            apods,
+            newapods
+        )
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         apods.clear()
         apods.addAll(newapods)
