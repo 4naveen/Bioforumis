@@ -1,6 +1,10 @@
 package com.example.bioforumis.service.model.data
 
 data class Response<T>(var status: Status, var data: T?, val message: String?) {
+
+    enum class Status {
+        SUCCESS, ERROR, LOADING, UNKNOWN
+    }
     companion object {
         fun <T> success(data: T): Response<T> =
             Response(

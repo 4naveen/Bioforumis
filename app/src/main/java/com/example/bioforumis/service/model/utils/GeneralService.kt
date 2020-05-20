@@ -31,7 +31,7 @@ class GeneralService {
                val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
                formatter.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata"))
                return formatter.format(Date())
-               Log.e("enddate", formatter.format(Date()))
+               //Log.e("enddate", formatter.format(Date()))
 
            } catch (e: ParseException) {
                e.printStackTrace()

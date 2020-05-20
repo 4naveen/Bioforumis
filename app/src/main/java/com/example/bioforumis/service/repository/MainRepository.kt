@@ -8,22 +8,24 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.room.Room
 import com.example.bioforumis.service.model.data.Apod
+import com.example.bioforumis.service.model.data.Response
 import com.example.bioforumis.service.model.utils.AppDatabase
+import com.example.bioforumis.service.model.utils.GeneralService
 import com.example.bioforumis.service.network.ApiService
 import com.example.bioforumis.service.network.RetrofitBuilder
-import com.example.bioforumis.service.model.utils.GeneralService
-import com.example.bioforumis.service.model.data.Response
-import com.example.bioforumis.service.model.data.Status
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.observers.DisposableSingleObserver
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
-import java.lang.Exception
 
 
 class MainRepository() {
     private var apiservice: ApiService? = null
-
+    private val disposable = CompositeDisposable()
     private var _apodList: MutableLiveData<Response<List<Apod>>> = MutableLiveData()
     var apodList: LiveData<Response<List<Apod>>> = _apodList
     var db: AppDatabase? = null
@@ -38,36 +40,25 @@ class MainRepository() {
 
     fun getApods(context: Context) {
         db = Room.databaseBuilder(context, AppDatabase::class.java, "apod.db").build()
-        apiservice?.getApod("NNKOjkoul8n1CH18TWA9gwngW1s1SmjESPjNoUFo", GeneralService.getStartDate(), GeneralService.getEnddate())?.enqueue(object : Callback<List<Apod>?> {
-            override fun onFailure(call: Call<List<Apod>?>, t: Throwable) {
-                _apodList.value =
-                    Response(
-                        Status.ERROR,
-                        null,
-                        ""
-                    )
-            }
-            override fun onResponse(call: Call<List<Apod>?>, response: retrofit2.Response<List<Apod>?>) {
-                _apodList.value =
-                    Response(
-                        Status.SUCCESS,
-                        response.body(),
-                        ""
-                    )
-                try {
-                    GlobalScope.launch {
-                        response.body()?.let { db!!.apodDao().updateData(it) }
+        disposable.add(
+            apiservice?.getApod("NNKOjkoul8n1CH18TWA9gwngW1s1SmjESPjNoUFo",GeneralService.getStartDate(), GeneralService.getEnddate())?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribeWith(object : DisposableSingleObserver<List<Apod?>?>() {
+                override fun onSuccess(apods: List<Apod?>) {
+
+                    _apodList.value = Response(Response.Status.SUCCESS,apods as List<Apod>,"")
+
+                    try {
+                        GlobalScope.launch {
+                            db!!.apodDao().updateData(apods as List<Apod>)
+                        }
+                    } catch (e: Exception) {
+                        _apodList.value = Response(Response.Status.ERROR, null, "")
                     }
-                } catch (e: Exception) {
-                    _apodList.value =
-                        Response(
-                            Status.ERROR,
-                            null,
-                            ""
-                        )
                 }
-            }
-        })
+                override fun onError(e: Throwable) {
+                    _apodList.value = Response(Response.Status.ERROR, null, "")
+                }
+            })!!
+        );
     }
     fun getApodsfromdb(context: Context) {
         db = Room.databaseBuilder(context, AppDatabase::class.java, "apod.db").build()
@@ -80,19 +71,19 @@ class MainRepository() {
                 handler.post {
                     _apodList.value =
                         Response(
-                            Status.SUCCESS,
+                            Response.Status.SUCCESS,
                             data,
                             ""
                         )
                 }
 
-                data?.forEach {
+                data.forEach {
                     Log.e("data", it.date)
                 }
             }).start()
         } catch (e: Exception) {
             _apodList.value = Response(
-                Status.ERROR,
+                Response.Status.ERROR,
                 null,
                 ""
             )
@@ -103,25 +94,24 @@ class MainRepository() {
 
     fun getApod(date: String) {
 
-        apiservice?.getApodBydate("NNKOjkoul8n1CH18TWA9gwngW1s1SmjESPjNoUFo", date)?.enqueue(object : Callback<Apod> {
-            override fun onFailure(call: Call<Apod>, t: Throwable) {
-                _apod.value = Response(
-                    Status.ERROR,
-                    null,
-                    ""
-                )
-            }
+        disposable.add(
+            apiservice?.getApodBydate("NNKOjkoul8n1CH18TWA9gwngW1s1SmjESPjNoUFo",date)?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribeWith(object : DisposableSingleObserver<Apod?>() {
+                override fun onSuccess(apod: Apod) {
 
-            override fun onResponse(call: Call<Apod>, response: retrofit2.Response<Apod>) {
-                _apod.value = Response(
-                    Status.SUCCESS,
-                    response.body(),
-                    ""
-                )
-            }
-        })
+                    _apod.value = Response(Response.Status.SUCCESS, apod, "")
+
+
+                }
+
+                override fun onError(e: Throwable) {
+                    _apodList.value = Response(Response.Status.ERROR, null, "")
+                }
+            })!!
+        );
     }
-
+  fun destroyDisposableObject(){
+      disposable.dispose();
+  }
     companion object {
         private var mainRepository: MainRepository? = null
 

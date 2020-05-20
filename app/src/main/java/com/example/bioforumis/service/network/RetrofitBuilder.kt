@@ -1,5 +1,6 @@
 package com.example.bioforumis.service.network
 
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Retrofit
@@ -16,6 +17,8 @@ class RetrofitBuilder {
             return Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+
                 .build() //Doesn't require the adapter
         }
 

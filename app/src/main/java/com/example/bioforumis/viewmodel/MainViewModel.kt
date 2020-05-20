@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import com.example.bioforumis.service.model.data.Apod
 import com.example.bioforumis.service.repository.MainRepository
 import com.example.bioforumis.service.model.data.Response
-import com.example.bioforumis.service.model.data.Status
 
 
 class MainViewModel : ViewModel() {
@@ -15,7 +14,7 @@ class MainViewModel : ViewModel() {
 
     fun getApods(context: Context, isConnected: Boolean) {
         val res = apodList.value
-        res?.status = Status.LOADING
+        res?.status = Response.Status.LOADING
         if (isConnected) {
             MainRepository.getInstance()!!.getApods(context)
         }
@@ -26,8 +25,11 @@ class MainViewModel : ViewModel() {
 
     fun getApod(date: String) {
         val res = apod.value
-        res?.status = Status.LOADING
+        res?.status = Response.Status.LOADING
         MainRepository.getInstance()!!.getApod(date)
     }
+    fun deleteDisposable(){
+        MainRepository.getInstance()!!.destroyDisposableObject()
 
+    }
 }

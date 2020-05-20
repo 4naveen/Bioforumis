@@ -14,12 +14,13 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bioforumis.R
-import com.example.bioforumis.view.adapter.MainAdapter
 import com.example.bioforumis.service.model.data.Apod
+import com.example.bioforumis.service.model.data.Response
 import com.example.bioforumis.service.model.utils.GeneralService
-import com.example.bioforumis.service.model.data.Status
+import com.example.bioforumis.view.adapter.MainAdapter
 import com.example.bioforumis.viewmodel.MainViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import io.reactivex.internal.util.NotificationLite.disposable
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -82,7 +83,7 @@ class MainActivity : AppCompatActivity () {
         recyclerView=findViewById(R.id.recyclerview)
         progressBar=findViewById(R.id.progressBar)
         fab=findViewById(R.id.fab)
-        recyclerView.layoutManager = LinearLayoutManager(this) as RecyclerView.LayoutManager?
+        recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = MainAdapter(arrayListOf())
         recyclerView.addItemDecoration(
             DividerItemDecoration(recyclerView.context, (recyclerView.layoutManager as LinearLayoutManager).orientation
@@ -95,22 +96,22 @@ class MainActivity : AppCompatActivity () {
         viewModel.apodList.observe(this, Observer {
             it?.let { response ->
                 when (response.status) {
-                    Status.SUCCESS -> {
+                    Response.Status.SUCCESS -> {
                         recyclerView.visibility = View.VISIBLE
                         progressBar.visibility = View.GONE
                         response.data?.let { apods -> saveList(apods) }
                     }
-                    Status.ERROR -> {
+                    Response.Status.ERROR -> {
                         recyclerView.visibility = View.VISIBLE
                         progressBar.visibility = View.GONE
 
                         Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
                     }
-                    Status.LOADING -> {
+                    Response.Status.LOADING -> {
                         progressBar.visibility = View.VISIBLE
                         recyclerView.visibility = View.GONE
                     }
-                    Status.UNKNOWN ->{
+                    Response.Status.UNKNOWN ->{
                         Log.e("errr","unknown")
                     }
                 }
@@ -123,22 +124,22 @@ class MainActivity : AppCompatActivity () {
         viewModel.apod.observe(this, Observer {
             it?.let { response ->
                 when (response.status) {
-                    Status.SUCCESS -> {
+                    Response.Status.SUCCESS -> {
                         recyclerView.visibility = View.VISIBLE
                         progressBar.visibility = View.GONE
                         response.data?.let { apods -> saveList(apods) }
                     }
-                    Status.ERROR -> {
+                    Response.Status.ERROR -> {
                         recyclerView.visibility = View.VISIBLE
                         progressBar.visibility = View.GONE
 
                         Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
                     }
-                    Status.LOADING -> {
+                    Response.Status.LOADING -> {
                         progressBar.visibility = View.VISIBLE
                         recyclerView.visibility = View.GONE
                     }
-                    Status.UNKNOWN ->{
+                    Response.Status.UNKNOWN ->{
                         Log.e("errr","unknown")
                     }
                 }
@@ -158,5 +159,9 @@ class MainActivity : AppCompatActivity () {
         apod_list!!.add(apod)
         adapter.addApod(apod_list!!)
 
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.deleteDisposable()
     }
 }
