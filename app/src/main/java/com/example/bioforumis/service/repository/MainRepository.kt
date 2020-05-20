@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.room.Room
 import com.example.bioforumis.service.model.Apod
 import com.example.bioforumis.service.model.AppDatabase
+import com.example.bioforumis.service.model.MyApplication
 import com.example.bioforumis.service.network.ApiService
 import com.example.bioforumis.service.network.RetrofitBuilder
 import com.example.bioforumis.service.utils.GeneralService
@@ -57,7 +58,7 @@ class MainRepository() {
 
                 try {
                     GlobalScope.launch {
-                        response.body()?.let { db!!.apodDao().insertAll(it) }
+                        response.body()?.let { db!!.apodDao().updateData(it) }
                     }
                 } catch (e: Exception) {
                     _apodList.value = Response(Status.ERROR, null, "")

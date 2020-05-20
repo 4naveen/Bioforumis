@@ -16,4 +16,13 @@ interface ApodDao {
 
     @Query("SELECT * FROM table_apod")
     fun getAll(): List<Apod>
+
+    @Transaction
+    open fun updateData(users: List<Apod>) {
+        deleteAllUsers()
+        insertAll(users)
+    }
+
+    @Query("DELETE FROM table_apod")
+    abstract fun deleteAllUsers()
 }
