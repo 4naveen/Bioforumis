@@ -1,4 +1,4 @@
-package com.example.bioforumis.service.model.utils
+package com.example.bioforumis.service.utils
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -48,7 +48,4 @@ class GeneralService {
            return startDate
        }
    }
-
-
-
 }

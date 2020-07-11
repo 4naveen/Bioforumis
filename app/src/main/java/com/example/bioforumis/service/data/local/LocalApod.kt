@@ -1,4 +1,4 @@
-package com.example.bioforumis.service.model.data
+package com.example.bioforumis.service.data.local
 
 
 import androidx.room.ColumnInfo
@@ -7,14 +7,11 @@ import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "table_apod")
-data class Apod(
+data class LocalApod(
     @ColumnInfo
-    @SerializedName("url")
     val image_url: String,
     @ColumnInfo
-    @SerializedName("date")
-    val date: String,
+    var date: String,
     @PrimaryKey
-    @SerializedName("title")
     val title: String
 )

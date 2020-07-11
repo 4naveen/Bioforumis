@@ -1,35 +1,46 @@
 package com.example.bioforumis.viewmodel
 
-import android.content.Context
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import com.example.bioforumis.service.model.data.Apod
+import com.example.bioforumis.service.data.remote.Response
 import com.example.bioforumis.service.repository.MainRepository
-import com.example.bioforumis.service.model.data.Response
+import com.example.bioforumis.service.data.remote.Apod
+import com.example.bioforumis.service.utils.GeneralService
 
 
-class MainViewModel : ViewModel() {
-    var apodList: LiveData<Response<List<Apod>>> = MainRepository.getInstance()!!.apodList
-    var apod: LiveData<Response<Apod>> = MainRepository.getInstance()!!.apod
+class MainViewModel(application :Application) : AndroidViewModel(application) {
 
-    fun getApods(context: Context, isConnected: Boolean) {
+
+    var isConnected: Boolean = false
+    private val repository: MainRepository
+    var apodList: LiveData<Response<List<Apod>>>
+    var apod: LiveData<Response<Apod>>
+    init {
+        repository = MainRepository(application)
+         apodList= repository.apodList
+        apod = repository.apod
+    }
+
+    fun getApods() {
         val res = apodList.value
         res?.status = Response.Status.LOADING
+        isConnected=GeneralService.isOnline(getApplication())
         if (isConnected) {
-            MainRepository.getInstance()!!.getApods(context)
+            repository.getApods()
         }
         else{
-            MainRepository.getInstance()!!.getApodsfromdb(context)
+            repository.getApodsfromdb()
         }
     }
 
     fun getApod(date: String) {
         val res = apod.value
         res?.status = Response.Status.LOADING
-        MainRepository.getInstance()!!.getApod(date)
+        repository.getApod(date)
     }
     fun deleteDisposable(){
-        MainRepository.getInstance()!!.destroyDisposableObject()
+        repository.destroyDisposableObject()
 
     }
 }

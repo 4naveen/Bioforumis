@@ -1,11 +1,8 @@
-package com.example.bioforumis.service.network
+package com.example.bioforumis.service.data.remote
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit;
 
 class RetrofitBuilder {
 

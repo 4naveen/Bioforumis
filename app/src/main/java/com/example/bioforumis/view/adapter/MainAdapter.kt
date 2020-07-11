@@ -7,15 +7,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bioforumis.R
-import com.example.bioforumis.service.model.data.Apod
+import com.example.bioforumis.service.data.remote.Apod
 import com.example.bioforumis.view.callback.DiffUtilCallback
 import kotlinx.android.synthetic.main.row_item.view.*
 
 class MainAdapter(private val apods: ArrayList<Apod>) : RecyclerView.Adapter<MainAdapter.DataViewHolder>() {
 
     class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-
         fun bind(apod: Apod) {
             itemView.apply {
                 title.text = apod.title

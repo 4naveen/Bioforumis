@@ -1,8 +1,6 @@
-package com.example.bioforumis.service.network
+package com.example.bioforumis.service.data.remote
 
-import com.example.bioforumis.service.model.data.Apod
 import io.reactivex.Single
-import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 

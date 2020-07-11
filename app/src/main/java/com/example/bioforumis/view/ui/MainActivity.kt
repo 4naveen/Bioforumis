@@ -14,13 +14,11 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bioforumis.R
-import com.example.bioforumis.service.model.data.Apod
-import com.example.bioforumis.service.model.data.Response
-import com.example.bioforumis.service.model.utils.GeneralService
+import com.example.bioforumis.service.data.remote.Apod
+import com.example.bioforumis.service.data.remote.Response
 import com.example.bioforumis.view.adapter.MainAdapter
 import com.example.bioforumis.viewmodel.MainViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import io.reactivex.internal.util.NotificationLite.disposable
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -51,6 +49,7 @@ class MainActivity : AppCompatActivity () {
         setupUI()
         setupObservers()
         fab!!.setOnClickListener { view ->
+
             val c = Calendar.getInstance()
             mYear = c.get(Calendar.YEAR);
             mMonth = c.get(Calendar.MONTH);
@@ -69,10 +68,7 @@ class MainActivity : AppCompatActivity () {
             )
             datePickerDialog.show();
         }
-
-
     }
-
     private fun setupViewModel() {
 
         viewModel = ViewModelProviders.of(this@MainActivity).get(MainViewModel::class.java)
@@ -117,7 +113,7 @@ class MainActivity : AppCompatActivity () {
                 }
             }
         })
-        viewModel.getApods(this@MainActivity,GeneralService.isOnline(this@MainActivity))
+        viewModel.getApods()
     }
 
     private fun setupObserverBydate(date:String) {

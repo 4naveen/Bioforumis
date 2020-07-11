@@ -1,4 +1,4 @@
-package com.example.bioforumis.service.model.data
+package com.example.bioforumis.service.data.remote
 
 data class Response<T>(var status: Status, var data: T?, val message: String?) {
 
