@@ -2,6 +2,7 @@ package com.example.bioforumis.view.ui
 
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
+import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -43,7 +44,6 @@ class MainActivity : AppCompatActivity () {
             actionbar.setDisplayHomeAsUpEnabled(true)
             actionbar.setTitle(R.string.app_name)
         }
-
         //setSupportActionBar(findViewById(R.id.toolbar))
         setupViewModel()
         setupUI()
@@ -69,6 +69,8 @@ class MainActivity : AppCompatActivity () {
             datePickerDialog.show();
         }
     }
+
+
     private fun setupViewModel() {
 
         viewModel = ViewModelProviders.of(this@MainActivity).get(MainViewModel::class.java)
@@ -160,4 +162,5 @@ class MainActivity : AppCompatActivity () {
         super.onDestroy()
         viewModel.deleteDisposable()
     }
+
 }

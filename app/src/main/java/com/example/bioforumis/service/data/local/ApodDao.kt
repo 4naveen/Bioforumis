@@ -27,4 +27,6 @@ interface ApodDao {
 
     @Query("DELETE FROM table_apod")
     abstract fun deleteAllApod()
+
+
 }

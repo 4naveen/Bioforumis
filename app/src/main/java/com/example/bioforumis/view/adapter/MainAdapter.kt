@@ -35,7 +35,6 @@ class MainAdapter(private val apods: ArrayList<Apod>) : RecyclerView.Adapter<Mai
     }
 
     fun addApod(newapods: List<Apod>) {
-
         val diffCallback = DiffUtilCallback(
             apods,
             newapods
@@ -44,6 +43,6 @@ class MainAdapter(private val apods: ArrayList<Apod>) : RecyclerView.Adapter<Mai
         apods.clear()
         apods.addAll(newapods)
         diffResult.dispatchUpdatesTo(this)
-
     }
+
 }

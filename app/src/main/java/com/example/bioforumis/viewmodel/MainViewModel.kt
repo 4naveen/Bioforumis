@@ -10,8 +10,6 @@ import com.example.bioforumis.service.utils.GeneralService
 
 
 class MainViewModel(application :Application) : AndroidViewModel(application) {
-
-
     var isConnected: Boolean = false
     private val repository: MainRepository
     var apodList: LiveData<Response<List<Apod>>>

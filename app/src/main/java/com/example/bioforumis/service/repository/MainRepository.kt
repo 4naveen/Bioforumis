@@ -26,7 +26,6 @@ class MainRepository(application :Application ) {
     private var _apodList: MutableLiveData<Response<List<Apod>>> = MutableLiveData()
     var apodList: LiveData<Response<List<Apod>>> = _apodList
     var db: AppDatabase? = null
-
     private var _apod: MutableLiveData<Response<Apod>> = MutableLiveData()
     var apod: LiveData<Response<Apod>> = _apod
 
@@ -41,9 +40,7 @@ class MainRepository(application :Application ) {
             apiservice!!.getApod("NNKOjkoul8n1CH18TWA9gwngW1s1SmjESPjNoUFo",GeneralService.getStartDate(), GeneralService.getEnddate()).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribeWith(object : DisposableSingleObserver<List<Apod>>() {
                 override fun onSuccess(apods: List<Apod>) {
-                    _apodList.value =
-                        Response(Response.Status.SUCCESS, apods as List<Apod>, ""
-                        )
+                    _apodList.value = Response(Response.Status.SUCCESS, apods as List<Apod>, "")
                     try {
                         GlobalScope.launch {
                             var local_apods:ArrayList<LocalApod>?=null
@@ -88,7 +85,6 @@ class MainRepository(application :Application ) {
     }
 
     fun getApod(date: String) {
-
         disposable.add(
             apiservice?.getApodBydate("NNKOjkoul8n1CH18TWA9gwngW1s1SmjESPjNoUFo",date)?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribeWith(object : DisposableSingleObserver<Apod?>() {
                 override fun onSuccess(apod: Apod) {
@@ -98,8 +94,6 @@ class MainRepository(application :Application ) {
                         apod,
                         ""
                     )
-
-
                 }
 
                 override fun onError(e: Throwable) {
@@ -113,9 +107,8 @@ class MainRepository(application :Application ) {
             })!!
         );
     }
-  fun destroyDisposableObject(){
+
+    fun destroyDisposableObject(){
       disposable.dispose();
   }
-
-
 }
